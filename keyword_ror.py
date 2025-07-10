@@ -21,17 +21,21 @@ def extract_keywords_from_ror(funder_401_path="funder_with_401code.csv", output_
                 first_funder = data["items"][0]
 
                 aliases = first_funder.get("aliases", []) or []
+                labels = [item["label"] for item in first_funder.get("labels", []) if "label" in item]
                 name = first_funder.get("name")
                 
-                # Filter aliases to exclude funder["Name"]
-                alternative_name = [alias for alias in aliases if alias != funder["Name"]]
+                # Remove duplicates and keep only those different from the ROR name
+                alternative_name = [name for name in (aliases + labels) if name != funder["Name"]]
 
+
+       
                 # Optionally add official name if different
                 if name and name != funder["Name"]:
                     alternative_name.append(name)
 
                 # Serialize alternative_name list to JSON string
                 alt_name_str = json.dumps(alternative_name) if alternative_name else "not_found"
+
 
                 result.append({
                     "Unique_Funder": funder["Name"],
@@ -91,5 +95,9 @@ def extract_single_funder_info(funder_name: str) -> dict:
             "Ror_ID": "not_found"
         }
 
-extract_keywords_from_ror()
+#extract_keywords_from_ror()
 
+
+#print(extract_single_funder_info("Bundesministerium für Bildung, Wissenschaft, Forschung und Technologie"))
+
+# print(extract_single_funder_info("China Medical University, Taiwan"))
